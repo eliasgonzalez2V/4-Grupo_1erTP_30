@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listar Mantenimientos</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+</head>
+<body class="d-flex flex-column align-items-center min-vh-100 py-4 bg-body-tertiary">
+    <div class="container py-3">
+        <header>
+            <nav class="navbar navbar-expand-md navbar-primary fixed-top bg-primary">
+                <div class="container-fluid">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:href="@{/administrador/logout}">Cerrar Sesión</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <br>
+            <br>
+            <br>
+            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                <h1 class="display-4 fw-normal text-body-emphasis">Lista de Tipos de Mantenimiento</h1>
+            </div>
+        </header>
+        <main class="form-signin w-100 m-auto">
+            <table class="table table-striped table-hover table-bordered border-primary">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tipo de Mantenimiento</th>
+                        <th>Tipo de Especialidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                        <tr th:each="mantenimiento : ${mantenimientos}">
+                            <td th:text="${mantenimiento.id}"></td>
+                            <td th:text="${mantenimiento.tipoMantenimiento}"></td>
+                            <td th:text="${mantenimiento.tipoEspecialidad}"></td> 
+                            <td>
+                            <a class="btn btn-outline-primary" role="button" th:href="@{/mantenimiento/editar/{id}(id=${mantenimiento.id})}">Editar</a>
+                            <a class="btn btn-outline-primary" role="button" th:href="@{/mantenimiento/eliminar/{id}(id=${mantenimiento.id})}" 
+                       onclick="return confirm('¿Está seguro de que desea eliminar este mantenimiento?');">Eliminar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+        <br>
+        <a class="btn btn-primary" role="button" onclick="history.back()">Volver a Menu</a>
+    </div>
+      <footer class="mt-auto py-3 border-top">
+    <p class=" text-body-secondary">© 2025 TP final</p>
+  </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${asignacion.id == null ? 'Registrar Renta de Garage' : 'Editar Renta de Garage'}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body class="d-flex flex-column align-items-center min-vh-100 py-4 bg-body-tertiary">
+
+    <header>
+        <nav class="navbar navbar-expand-md navbar-primary fixed-top bg-primary">
+            <div class="container-fluid">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:href="@{/administrador/logout}">Cerrar Sesión</a>
+                        </li>
+                </ul>
+            </div>
+        </nav>
+        <br>
+        <br>
+        <br>
+        <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+            <h1 class="display-4 fw-normal text-body-emphasis" th:text="${asignacion.id == null ? 'Registrar Nueva Renta de Garage' : 'Editar Renta de Garage'}"></h1>        </div>
+    </header>
+    <main class="form-signin w-50 mx-auto">
+
+        <div>
+            <form th:action="@{/socioasignacion/guardar}" th:object="${asignacion}" method="post" class="needs-validation" novalidate>
+                <input type="hidden" th:field="*{id}">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label" for="socio">Socio:</label>
+                        <select class="form-select" id="socio" th:field="*{socio}" required>
+                            <option th:value="null" disabled>-- Seleccione un Socio --</option>
+                            <option th:each="socio : ${socios}" 
+                                    th:value="${socio.id}" 
+                                    th:text="${socio.nombre + ' (' + socio.dni + ')'}">Socio</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="garage">Garage a Asignar:</label>
+                        <select class="form-select" id="garage" th:field="*{garage}" required>
+                            <option th:value="null" disabled>-- Seleccione un Garage --</option>
+                            <option th:each="garage : ${garages}" 
+                                    th:value="${garage.id}" 
+                                    th:text="'Garage ID: ' + ${garage.id} + ' (Zona: ' + ${garage.zona.id} + ')'">Garage</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="vehiculo">Vehículo Asignado:</label>
+                        <select class="form-select" id="vehiculo" th:field="*{vehiculo}" required>
+                            <option th:value="null" disabled>-- Seleccione un Vehículo --</option>
+                            <option th:each="vehiculo : ${vehiculos}" 
+                                    th:value="${vehiculo.id}" 
+                                    th:text="${vehiculo.matricula + ' (' + vehiculo.marca + ')'}">Vehículo</option>
+                        </select>
+                    </div>
+                </div>
+                <hr class="my-4" />
+                <button class="w-100 btn btn-primary btn-lg" type="submit">
+                    Guardar Renta
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <br>
+        <a class="btn btn-primary" role="button" onclick="history.back()">Volver </a>
+<br>
+    <footer class="mt-auto py-3 border-top">
+        <p class="mb-0 text-body-secondary">© 2025 TP final</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+ 
+</body>
+</html>
