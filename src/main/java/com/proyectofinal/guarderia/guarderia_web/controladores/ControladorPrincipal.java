@@ -8,6 +8,6 @@ public class ControladorPrincipal {
 
     @GetMapping("/")
     public String inicio() {
-        return "index"; 
+        return "index";
     }
 }

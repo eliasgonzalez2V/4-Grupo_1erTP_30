@@ -17,6 +17,10 @@ public class EmpleadoAsignacionService {
         return empleadoAsignacionRepository.findAll();
     }
 
+    public List<EmpleadoAsignacion> buscarPorEmpleadoId(Integer empleadoId) {
+        return empleadoAsignacionRepository.findByEmpleadoId(empleadoId);
+    }
+
     public void guardar(EmpleadoAsignacion empleadoAsignacion) {
         empleadoAsignacionRepository.save(empleadoAsignacion);
     }

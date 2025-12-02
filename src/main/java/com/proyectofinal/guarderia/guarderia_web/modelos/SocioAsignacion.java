@@ -1,6 +1,7 @@
 package com.proyectofinal.guarderia.guarderia_web.modelos;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "socioasignacion")
@@ -12,7 +13,7 @@ public class SocioAsignacion {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "ID_socio") 
+    @JoinColumn(name = "ID_socio")
     private Socio socio;
 
     @ManyToOne
@@ -23,6 +24,8 @@ public class SocioAsignacion {
     @JoinColumn(name = "ID_vehiculoAsignado")
     private Vehiculo vehiculo;
 
+    @Column(name = "fechaAsignada", nullable = false)
+    private LocalDate fechaAsignada;
 
     public SocioAsignacion() {
     }
@@ -59,4 +62,11 @@ public class SocioAsignacion {
         this.vehiculo = vehiculo;
     }
 
+    public LocalDate getFechaAsignada() {
+        return fechaAsignada;
+    }
+
+    public void setFechaAsignada(LocalDate fechaAsignada) {
+        this.fechaAsignada = fechaAsignada;
+    }
 }

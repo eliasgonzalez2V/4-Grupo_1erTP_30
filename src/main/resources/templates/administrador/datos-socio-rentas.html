@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="datosSocio">
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error!</strong> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${socio}">
+            <h5 class="mb-3">Datos de <span th:text="${socio.nombre}"></span></h5>
+            
+            <div th:if="${not garagesPropios.empty}" class="mb-4">
+                <h6 class="text-primary">Garages Propios:</h6>
+                <div th:each="garage : ${garagesPropios}" class="card mb-2">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h6 class="card-title">Garage <span th:text="${garage.id}"></span> - Zona <span th:text="${garage.zona.id}"></span></h6>
+                                <p class="card-text mb-0">
+                                    <small>Comprado: <span th:text="${garage.fechaCompra}"></span></small><br>
+                                    <small>Vehículo asignado: 
+                                        <span th:if="${garage.vehiculoAsignado}" 
+                                              th:text="${garage.vehiculoAsignado.matricula + ' - ' + garage.vehiculoAsignado.marca}"
+                                              class="text-success fw-bold"></span>
+                                        <span th:unless="${garage.vehiculoAsignado}" class="text-muted">Ninguno</span>
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <form th:action="@{/garage/asignar-vehiculo}" method="post" class="row g-2 align-items-center">
+                                    <input type="hidden" name="socioId" th:value="${socio.id}">
+                                    <input type="hidden" name="garageId" th:value="${garage.id}">
+                                    <input type="hidden" name="tipoGarage" value="propio">
+                                    <div class="col-8">
+                                        <select name="vehiculoId" class="form-select form-select-sm" required>
+                                            <option value="">-- Seleccione vehículo --</option>
+                                            <option value="0" th:if="${garage.vehiculoAsignado != null}">
+                                                Quitar vehículo (dejar garage vacío)
+                                            </option>
+                                            <option th:each="vehiculo : ${vehiculosSocio}" 
+                                                    th:value="${vehiculo.id}"
+                                                    th:text="${vehiculo.matricula + ' - ' + vehiculo.marca}"
+                                                    th:selected="${garage.vehiculoAsignado != null and garage.vehiculoAsignado.id == vehiculo.id}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="submit" class="btn btn-primary btn-sm w-100">
+                                            <span th:if="${garage.vehiculoAsignado != null}">Cambiar Asignación</span>
+                                            <span th:unless="${garage.vehiculoAsignado != null}">Asignar Vehículo</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${not garagesRentados.empty}" class="mb-4">
+                <h6 class="text-primary">Garages Rentados:</h6>
+                <div th:each="garage : ${garagesRentados}" class="card mb-2">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h6 class="card-title">Garage <span th:text="${garage.id}"></span> - Zona <span th:text="${garage.zona.id}"></span></h6>
+                                <p class="card-text mb-0">
+                                    <small>Renta: <span th:text="${garage.fechaInicioRenta}"></span> a <span th:text="${garage.fechaFinRenta}"></span></small><br>
+                                    <small>Vehículo asignado: 
+                                        <span th:if="${garage.vehiculoAsignado}" 
+                                              th:text="${garage.vehiculoAsignado.matricula + ' - ' + garage.vehiculoAsignado.marca}"
+                                              class="text-success fw-bold"></span>
+                                        <span th:unless="${garage.vehiculoAsignado}" class="text-muted">Ninguno</span>
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <form th:action="@{/garage/asignar-vehiculo}" method="post" class="row g-2 align-items-center">
+                                    <input type="hidden" name="socioId" th:value="${socio.id}">
+                                    <input type="hidden" name="garageId" th:value="${garage.id}">
+                                    <input type="hidden" name="tipoGarage" value="rentado">
+                                    <div class="col-8">
+                                        <select name="vehiculoId" class="form-select form-select-sm" required>
+                                            <option value="">-- Seleccione vehículo --</option>
+                                            <option value="0" th:if="${garage.vehiculoAsignado != null}">
+                                                Quitar vehículo (dejar garage vacío)
+                                            </option>
+                                            <option th:each="vehiculo : ${vehiculosSocio}" 
+                                                    th:value="${vehiculo.id}"
+                                                    th:text="${vehiculo.matricula + ' - ' + vehiculo.marca}"
+                                                    th:selected="${garage.vehiculoAsignado != null and garage.vehiculoAsignado.id == vehiculo.id}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="submit" class="btn btn-primary btn-sm w-100">
+                                            <span th:if="${garage.vehiculoAsignado != null}">Cambiar Asignación</span>
+                                            <span th:unless="${garage.vehiculoAsignado != null}">Asignar Vehículo</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${garagesPropios.empty and garagesRentados.empty}" class="alert alert-warning">
+                Este socio no tiene garages (propios o rentados).
+            </div>
+
+            <div th:if="${not vehiculosSocio.empty}">
+                <h6 class="text-success">Vehículos del Socio:</h6>
+                <div class="row">
+                    <div th:each="vehiculo : ${vehiculosSocio}" class="col-12">
+                        <div class="d-flex justify-content-between align-items-center p-2 border rounded mb-1">
+                            <small>
+                                <strong th:text="${vehiculo.matricula}"></strong> - 
+                                <span th:text="${vehiculo.marca}"></span> 
+                                (<span th:text="${vehiculo.tipo}"></span>)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${vehiculosSocio.empty}" class="alert alert-info">
+                Este socio no tiene vehículos registrados.
+            </div>
+        </div>
+        
+        <div th:unless="${socio}" class="alert alert-danger">
+            No se pudo cargar la información del socio.
+        </div>
+    </div>
+</body>
+</html>

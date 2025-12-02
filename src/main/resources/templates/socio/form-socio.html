@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title th:text="${socio.id == null ? 'Crear Socio' : 'Editar Socio'}"></title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    </head>
+    <body class="d-flex flex-column align-items-center min-vh-100 py-4 bg-body-tertiary">
+
+        <header>
+            <nav class="navbar navbar-expand-md navbar-primary fixed-top bg-primary">
+                <div class="container-fluid">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <br>
+            <br>
+            <br>
+            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                <h1 class="display-4 fw-normal text-body-emphasis" th:text="${socio.id == null ? 'Crear Nuevo Socio' : 'Editar Socio: ' + socio.nombre}"></h1>
+            </div>
+        </header>
+        <main class="form-signin w-50 mx-auto">
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                <strong>Error!</strong> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <strong>Éxito!</strong> <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${exito}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <strong>Éxito!</strong> <span th:text="${exito}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+
+
+            <div>
+                <form th:action="@{/socio/guardar}" th:object="${socio}" method="post" class="needs-validation" novalidate>
+                    <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                        <ul>
+                            <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                        </ul>
+                    </div>
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" name="tipo_persona" value="socio">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="dni" class="form-label">DNI:</label>
+                            <input type="number" id="dni" class="form-control" th:field="*{dni}" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese el DNI del socio.
+                            </div>
+                            <div th:if="${#fields.hasErrors('dni')}" class="text-danger">
+                                <span th:errors="*{dni}"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="nombre" class="form-label">Nombre:</label>
+                            <input type="text" id="nombre" class="form-control" th:field="*{nombre}" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese el nombre del socio.
+                            </div>
+                            <div th:if="${#fields.hasErrors('nombre')}" class="text-danger">
+                                <span th:errors="*{nombre}"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="direccion" class="form-label">Dirección:</label>
+                            <input type="text" id="direccion" class="form-control" th:field="*{direccion}" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese la dirección del socio.
+                            </div>
+                            <div th:if="${#fields.hasErrors('direccion')}" class="text-danger">
+                                <span th:errors="*{direccion}"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="telefono" class="form-label">Teléfono:</label>
+                            <input type="text" id="telefono" class="form-control" th:field="*{telefono}" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese el teléfono del socio.
+                            </div>
+                            <div th:if="${#fields.hasErrors('telefono')}" class="text-danger">
+                                <span th:errors="*{telefono}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="fechaIngreso" class="form-label">Fecha Ingreso:</label>
+                            <input type="date" id="fechaIngreso" class="form-control" th:field="*{fechaIngreso}" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese la fecha de ingreso.
+                            </div>
+                            <div th:if="${#fields.hasErrors('fechaIngreso')}" class="text-danger">
+                                <span th:errors="*{fechaIngreso}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="contrasenia" class="form-label">
+                                <span th:text="${socio.id == null ? 'Contraseña:' : 'Nueva Contraseña (opcional):'}"></span>
+                            </label>
+                            <input type="password" id="contrasenia" class="form-control" th:field="*{contrasenia}" 
+                                   th:required="${socio.id == null}"> 
+                            <div class="form-text" th:if="${socio.id == null}">
+                                La contraseña es obligatoria para nuevos socios.
+                            </div>
+                            <div class="form-text" th:if="${socio.id != null}">
+                                Dejar en blanco para mantener la contraseña actual.
+                            </div>
+                            <div class="invalid-feedback">
+                                La contraseña es obligatoria para nuevos socios.
+                            </div>
+                            <div th:if="${#fields.hasErrors('contrasenia')}" class="text-danger">
+                                <span th:errors="*{contrasenia}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+                    <button class="w-100 btn btn-primary btn-lg" type="submit">
+                        <span th:text="${socio.id == null ? 'Crear Socio' : 'Actualizar Socio'}"></span>
+                    </button>
+                </form>
+            </div>
+        </main>
+
+        <br>
+        <a class="btn btn-primary" role="button" th:href="@{/socio/listar}">Volver al Listado</a>
+        <br>
+        <footer class="mt-auto py-3 border-top">
+            <p class="mb-0 text-body-secondary">© 2025 TP final</p>
+        </footer>
+
+        <script>
+            (function () {
+                'use strict'
+                var forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms)
+                        .forEach(function (form) {
+                            form.addEventListener('submit', function (event) {
+                                if (!form.checkValidity()) {
+                                    event.preventDefault()
+                                    event.stopPropagation()
+                                }
+                                form.classList.add('was-validated')
+                            }, false)
+                        })
+            })()
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    </body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Vehículos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body class="d-flex flex-column align-items-center min-vh-100 py-4 bg-body-tertiary">
+
+    <div class="container py-3">
+        <header>
+            <nav class="navbar navbar-expand-md navbar-primary fixed-top bg-primary">
+                <div class="container-fluid">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" 
+                               th:href="${(esSocio != null and esSocio) ? '/socio/logout' : ((esAdmin != null and esAdmin) ? '/administrador/logout' : '/empleado/logout')}">
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <br>
+            <br>
+            <br>
+            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                <h1 class="display-4 fw-normal text-body-emphasis" 
+                    th:text="${(esSocio != null and esSocio) ? 'Mis Vehículos' : 'Lista de Vehículos'}">
+                </h1>
+                
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <strong>Error!</strong> <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <strong>Éxito!</strong> <span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${exito}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <strong>Éxito!</strong> <span th:text="${exito}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="form-signin w-100 m-auto">
+            <div th:if="${vehiculos.empty}" class="alert alert-info text-center">
+                <h4 th:text="${(esSocio != null and esSocio) ? 'No tienes vehículos registrados' : 'No hay vehículos registrados'}"></h4>
+                <p th:text="${(esSocio != null and esSocio) ? 'Puedes registrar nuevos vehículos contactando al administrador' : 'Puedes crear nuevos vehículos'}"></p>
+            </div>
+
+            <div th:unless="${vehiculos.empty}">
+                <table class="table table-striped table-hover table-bordered border-primary">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Matrícula</th>
+                            <th>Marca</th>
+                            <th>Tipo</th>
+                            <th>Mantenimiento</th>
+                            <th th:if="${esAdmin != null and esAdmin}">Socio Propietario</th>
+                            <th th:if="${esSocio != null and esSocio}">Garage Asignado</th>
+                            <th th:if="${esAdmin != null and esAdmin}">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <tr th:each="vehiculo : ${vehiculos}">
+                            <td th:text="${vehiculo.id}"></td>
+                            <td th:text="${vehiculo.matricula}"></td>
+                            <td th:text="${vehiculo.marca}"></td>
+                            <td th:text="${vehiculo.tipo}"></td>
+                            <td>
+                                <span th:if="${vehiculo.mantenimiento != null}" 
+                                      th:text="${vehiculo.mantenimiento.tipoMantenimiento}"></span>
+                                <span th:unless="${vehiculo.mantenimiento != null}" 
+                                      class="text-muted">Sin mantenimiento</span>
+                            </td>
+                            <td th:if="${esAdmin != null and esAdmin}">
+                                <span th:if="${vehiculo.socioPropietario != null}" 
+                                      th:text="${vehiculo.socioPropietario.nombre} + ' (DNI: ' + ${vehiculo.socioPropietario.dni} + ')'"></span>
+                                <span th:unless="${vehiculo.socioPropietario != null}" 
+                                      class="text-muted">Sin socio</span>
+                            </td>
+                            <td th:if="${esSocio != null and esSocio}">
+                                <span th:if="${vehiculo.garageAsignado != null}" 
+                                      th:text="'Garage ' + ${vehiculo.garageAsignado.id} + ' - Zona ' + ${vehiculo.garageAsignado.zona.id}"></span>
+                                <span th:unless="${vehiculo.garageAsignado != null}" 
+                                      class="text-muted">No asignado</span>
+                            </td>
+                            <td th:if="${esAdmin != null and esAdmin}">
+                                <a class="btn btn-outline-primary" role="button" th:href="@{/vehiculo/editar/{id}(id=${vehiculo.id})}">Editar</a>
+                                <a class="btn btn-outline-primary" role="button" th:href="@{/vehiculo/eliminar/{id}(id=${vehiculo.id})}" 
+                                   onclick="return confirm('¿Está seguro de que desea eliminar este vehículo?');">Eliminar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <br>
+            <a class="btn btn-primary" role="button" 
+               th:href="${(esSocio != null and esSocio) ? '/socio/menu' : ((esAdmin != null and esAdmin) ? '/administrador/menu' : '/empleado/menu')}">
+                Volver a Menú
+            </a>
+        </main>
+    </div>
+
+    <footer class="mt-auto py-3 border-top">
+        <p class="text-body-secondary">© 2025 TP final</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

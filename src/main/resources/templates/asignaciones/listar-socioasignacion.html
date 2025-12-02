@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title th:text="${nombreAdministrador != null ? 'Gestión de Rentas de Garages' : 'Mis Rentas - Socio'}"></title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    </head>
+    <body class="d-flex flex-column align-items-center min-vh-100 py-4 bg-body-tertiary">
+        <div class="container py-3">
+            <header>
+                <nav class="navbar navbar-expand-md navbar-primary fixed-top bg-primary">
+                    <div class="container-fluid">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item">
+                                <a class="nav-link active" th:href="${nombreAdministrador != null ? '/administrador/logout' : '/socio/logout'}">Cerrar Sesión</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <br>
+                <br>
+                <br>
+                <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                    <h1 class="display-4 fw-normal text-body-emphasis" th:text="${nombreAdministrador != null ? 'Gestión de Rentas de Garages' : 'Mis Rentas Activas'}"></h1>
+                </div>
+            </header>
+
+            <main class="form-signin w-100 m-auto">
+                <div th:if="${exito}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Éxito!</strong> <span th:text="${exito}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error!</strong> <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${asignaciones.empty}" class="alert alert-info text-center">
+                    <h4 th:text="${nombreAdministrador != null ? 'No hay rentas activas' : 'No tienes rentas activas'}"></h4>
+                    <p th:text="${nombreAdministrador != null ? 'Puedes crear una nueva renta haciendo clic en el botón \"Nueva Renta\"' : 'Puedes rentar un garage contactando al administrador'}"></p>
+                </div>
+
+                <div th:unless="${asignaciones.empty}">
+                    <table class="table table-striped table-hover table-bordered border-primary">
+                        <thead>
+                            <tr>
+                                <th>ID Renta</th>
+                                <th>Garage ID</th>
+                                <th>Zona</th>
+                                <th>Vehículo</th>
+                                <th th:if="${nombreAdministrador != null}">Socio</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <tr th:each="asignacion : ${asignaciones}">
+                                <td th:text="${asignacion.id}"></td>
+                                <td th:text="${asignacion.garage.id}"></td>
+                                <td>
+                                    <span th:if="${asignacion.garage.zona != null}"
+                                          th:text="${asignacion.garage.zona.id}"></span>
+                                    <span th:unless="${asignacion.garage.zona != null}"
+                                          class="text-muted">Sin zona</span>
+                                </td>
+                                <td>
+                                    <span th:if="${asignacion.vehiculo != null}" 
+                                          th:text="${asignacion.vehiculo.matricula + ' - ' + asignacion.vehiculo.marca}"></span>
+                                    <span th:unless="${asignacion.vehiculo != null}" class="text-muted">Sin vehículo</span>
+                                </td>
+                                <td th:if="${nombreAdministrador != null}">
+                                    <span th:if="${asignacion.socio != null}"
+                                          th:text="${asignacion.socio.nombre + ' (' + asignacion.socio.dni + ')'}"></span>
+                                    <span th:unless="${asignacion.socio != null}"
+                                          class="text-muted">Sin socio</span>
+                                </td>
+                                <td>
+                                    <a th:if="${nombreAdministrador != null}" 
+                                       class="btn btn-outline-primary" 
+                                       th:href="@{/socioasignacion/editar/{id}(id=${asignacion.id})}" 
+                                       role="button">Editar</a>
+                                    <a th:if="${nombreAdministrador != null}" 
+                                       class="btn btn-outline-danger" 
+                                       th:href="@{/socioasignacion/eliminar/{id}(id=${asignacion.id})}"   
+                                       role="button"
+                                       onclick="return confirm('¿Está seguro de que desea eliminar esta renta?');">Eliminar</a>
+                                    <a th:unless="${nombreAdministrador != null}" 
+                                       class="btn btn-outline-danger" 
+                                       th:href="@{/socioasignacion/eliminar/{id}(id=${asignacion.id})}"   
+                                       role="button"
+                                       onclick="return confirm('¿Está seguro de que desea cancelar esta renta?');">Cancelar</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+            <br>
+            <a class="btn btn-primary" role="button" th:href="@{/administrador/menu}">Volver a Menu</a>
+        </div>
+
+        <footer class="mt-auto py-3 border-top">
+            <p class="text-body-secondary">© 2025 TP final</p>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    </body>
+</html>

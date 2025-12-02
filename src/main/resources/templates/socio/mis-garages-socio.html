@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mis Garages - Socio</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    </head>
+    <body class="d-flex flex-column align-items-center min-vh-100 py-4 bg-body-tertiary">
+
+        <header>
+            <nav class="navbar navbar-expand-md navbar-primary fixed-top bg-primary">
+                <div class="container-fluid">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{/socio/logout}">Cerrar Sesión</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <br>
+            <br>
+            <br>
+            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                <h1 class="display-4 fw-normal text-body-emphasis">Mis Garages</h1>
+                <p class="lead">Gestione sus garages y asigne sus vehículos</p>
+            </div>
+        </header>
+
+        <main class="form-signin w-75 mx-auto">
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                <strong>Error!</strong> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <strong>Éxito!</strong> <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${exito}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <strong>Éxito!</strong> <span th:text="${exito}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Mis Garages y Vehículos</h4>
+
+                    <div th:if="${not garagesPropios.empty}" class="mb-4">
+                        <h6 class="text-primary">Mis Garages Propios:</h6>
+                        <div th:each="garage : ${garagesPropios}" class="card mb-2">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h6 class="card-title">Garage <span th:text="${garage.id}"></span> - Zona <span th:text="${garage.zona.id}"></span></h6>
+                                        <p class="card-text mb-0">
+                                            <small>Comprado: <span th:text="${garage.fechaCompra}"></span></small><br>
+                                            <small>Vehículo asignado: 
+                                                <span th:if="${garage.vehiculoAsignado}" 
+                                                      th:text="${garage.vehiculoAsignado.matricula + ' - ' + garage.vehiculoAsignado.marca}"
+                                                      class="text-success fw-bold"></span>
+                                                <span th:unless="${garage.vehiculoAsignado}" class="text-muted">Ninguno</span>
+                                            </small>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <form th:action="@{/socio/asignar-vehiculo}" method="post" class="row g-2 align-items-center">
+                                            <input type="hidden" name="garageId" th:value="${garage.id}">
+                                            <div class="col-8">
+                                                <select name="vehiculoId" class="form-select form-select-sm" required>
+                                                    <option value="">-- Seleccione vehículo --</option>
+                                                    <option th:each="vehiculo : ${misVehiculos}" 
+                                                            th:value="${vehiculo.id}"
+                                                            th:text="${vehiculo.matricula + ' - ' + vehiculo.marca}"
+                                                            th:selected="${garage.vehiculoAsignado != null and garage.vehiculoAsignado.id == vehiculo.id}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-4">
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                    <span th:if="${garage.vehiculoAsignado != null}">Cambiar Asignación</span>
+                                                    <span th:unless="${garage.vehiculoAsignado != null}">Asignar Vehículo</span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${not garagesRentados.empty}" class="mb-4">
+                        <h6 class="text-primary">Mis Garages Rentados:</h6>
+                        <div th:each="garage : ${garagesRentados}" class="card mb-2">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h6 class="card-title">Garage <span th:text="${garage.id}"></span> - Zona <span th:text="${garage.zona.id}"></span></h6>
+                                        <p class="card-text mb-0">
+                                            <small>Renta: <span th:text="${garage.fechaInicioRenta}"></span> a <span th:text="${garage.fechaFinRenta}"></span></small><br>
+                                            <small>Vehículo asignado: 
+                                                <span th:if="${garage.vehiculoAsignado}" 
+                                                      th:text="${garage.vehiculoAsignado.matricula + ' - ' + garage.vehiculoAsignado.marca}"
+                                                      class="text-success fw-bold"></span>
+                                                <span th:unless="${garage.vehiculoAsignado}" class="text-muted">Ninguno</span>
+                                            </small>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <form th:action="@{/socio/asignar-vehiculo-rentado}" method="post" class="row g-2 align-items-center">
+                                            <input type="hidden" name="garageId" th:value="${garage.id}">
+                                            <div class="col-8">
+                                                <select name="vehiculoId" class="form-select form-select-sm" required>
+                                                    <option value="">-- Seleccione vehículo --</option>
+                                                    <option th:each="vehiculo : ${misVehiculos}" 
+                                                            th:value="${vehiculo.id}"
+                                                            th:text="${vehiculo.matricula + ' - ' + vehiculo.marca}"
+                                                            th:selected="${garage.vehiculoAsignado != null and garage.vehiculoAsignado.id == vehiculo.id}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-4">
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                    <span th:if="${garage.vehiculoAsignado != null}">Cambiar Asignación</span>
+                                                    <span th:unless="${garage.vehiculoAsignado != null}">Asignar Vehículo</span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${garagesPropios.empty and garagesRentados.empty}" class="alert alert-warning">
+                        No tienes garages (propios o rentados).
+                    </div>
+
+                    <div th:if="${not misVehiculos.empty}">
+                        <h6 class="text-success">Mis Vehículos:</h6>
+                        <div class="row">
+                            <div th:each="vehiculo : ${misVehiculos}" class="col-12">
+                                <div class="d-flex justify-content-between align-items-center p-2 border rounded mb-1">
+                                    <small>
+                                        <strong th:text="${vehiculo.matricula}"></strong> - 
+                                        <span th:text="${vehiculo.marca}"></span> 
+                                        (<span th:text="${vehiculo.tipo}"></span>)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${misVehiculos.empty}" class="alert alert-info">
+                        No tienes vehículos registrados.
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <br>
+        <a class="btn btn-primary" role="button" th:href="@{/socio/menu}">Volver al Menú</a>
+        <br>
+
+        <footer class="mt-auto py-3 border-top">
+            <p class="mb-0 text-body-secondary">© 2025 TP final</p>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    </body>
+</html>

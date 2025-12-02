@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${garage.id == null ? 'Crear Garage' : 'Editar Garage'}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body class="d-flex flex-column align-items-center min-vh-100 py-4 bg-body-tertiary">
+
+    <header>
+        <nav class="navbar navbar-expand-md navbar-primary fixed-top bg-primary">
+            <div class="container-fluid">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:href="@{/administrador/logout}">Cerrar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <br>
+        <br>
+        <br>
+        <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+            <h1 class="display-4 fw-normal text-body-emphasis" th:text="${garage.id == null ? 'Crear Nuevo Garage' : 'Editar Garage: ' + garage.id}"></h1>
+        </div>
+    </header>
+    <main class="form-signin w-50 mx-auto">
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <strong>Error!</strong> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <strong>Éxito!</strong> <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${exito}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <strong>Éxito!</strong> <span th:text="${exito}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div>
+            <form th:action="@{/garage/guardar}" th:object="${garage}" method="post" class="needs-validation" novalidate>
+                <input type="hidden" th:field="*{id}">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label" for="zona">Zona:</label>
+                        <select class="form-select" id="zona" th:field="*{zona.id}" required>
+                            <option value="" disabled>-- Seleccione una Zona --</option>
+                            <option th:each="zona : ${zonas}" 
+                                    th:value="${zona.id}" 
+                                    th:text="'Zona ' + ${zona.id} + ' (' + ${zona.tipoVehiculo} + ')'"
+                                    th:selected="${garage.zona != null and garage.zona.id == zona.id}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label for="contadorLuz" class="form-label">Contador Luz:</label>
+                        <input type="number" id="contadorLuz" class="form-control" th:field="*{contadorLuz}">
+                    </div>
+
+                    <div class="mb-3 text-center">
+                        <button type="button" class="btn btn-success me-2" onclick="mostrarComprado()">SECCIÓN GARAGE COMPRADO</button>
+                        <button type="button" class="btn btn-warning" onclick="mostrarRentado()">SECCIÓN GARAGE RENTADO</button>
+                    </div>
+
+                    <div id="seccionComprado" class="col-12 border p-3 rounded bg-light" style="display: none;">
+                        <h5 class="mb-3">Garage Comprado</h5>
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label" for="socioPropietario">Socio Propietario:</label>
+                                <select class="form-select" id="socioPropietario" th:field="*{socioPropietario.id}">
+                                    <option value="">-- Seleccione un Socio Propietario --</option>
+                                    <option th:each="socio : ${socios}" 
+                                            th:value="${socio.id}" 
+                                            th:text="${socio.nombre} + ' (DNI: ' + ${socio.dni} + ')'"
+                                            th:selected="${garage.socioPropietario != null and garage.socioPropietario.id == socio.id}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="fechaCompra" class="form-label">Fecha Compra:</label>
+                                <input type="date" id="fechaCompra" class="form-control" th:field="*{fechaCompra}">
+                            </div>
+                        </div>
+                        <div class="form-text text-muted small">
+                            Complete ambos campos si el garage fue comprado por un socio.
+                        </div>
+                    </div>
+
+                    <div id="seccionRentado" class="col-12 border p-3 rounded bg-light mt-3" style="display: none;">
+                        <h5 class="mb-3">Garage Rentado</h5>
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label" for="socioRentado">Socio Rentado:</label>
+                                <select class="form-select" id="socioRentado" name="socioRentado.id">
+                                    <option value="">-- Seleccione un Socio Rentado --</option>
+                                    <option th:each="socio : ${socios}" 
+                                            th:value="${socio.id}" 
+                                            th:text="${socio.nombre} + ' (DNI: ' + ${socio.dni} + ')'"
+                                            th:selected="${garage.socioRentado != null and garage.socioRentado.id == socio.id}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="fechaInicioRenta" class="form-label">Fecha Inicio Renta:</label>
+                                <input type="date" id="fechaInicioRenta" class="form-control" th:field="*{fechaInicioRenta}">
+                            </div>
+                            <div class="col-12">
+                                <label for="fechaFinRenta" class="form-label">Fecha Fin Renta:</label>
+                                <input type="date" id="fechaFinRenta" class="form-control" th:field="*{fechaFinRenta}">
+                            </div>
+                        </div>
+                        <div class="form-text text-muted small">
+                            Complete los tres campos si el garage está siendo rentado.
+                        </div>
+                    </div>
+
+                    <div class="col-12 alert alert-info">
+                        <strong>Nota:</strong> Un garage puede ser <strong>comprado</strong> o <strong>rentado</strong>, pero no ambos. 
+                        Si no completa ninguna sección, el garage quedará como disponible.
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+                <button class="w-100 btn btn-primary btn-lg" type="submit">
+                    <span th:text="${garage.id == null ? 'Crear Garage' : 'Actualizar Garage'}"></span>
+                </button>
+                <script>
+                    function limpiarComprado() {
+                        document.getElementById("socioPropietario").value = "";
+                        document.getElementById("fechaCompra").value = "";
+                    }
+
+                    function limpiarRentado() {
+                        document.getElementById("socioRentado").value = "";
+                        document.getElementById("fechaInicioRenta").value = "";
+                        document.getElementById("fechaFinRenta").value = "";
+                    }
+
+                    function mostrarComprado() {
+                        document.getElementById("seccionComprado").style.display = "block";
+                        document.getElementById("seccionRentado").style.display = "none";
+                        limpiarRentado(); 
+                    }
+
+                    function mostrarRentado() {
+                        document.getElementById("seccionComprado").style.display = "none";
+                        document.getElementById("seccionRentado").style.display = "block";
+                        limpiarComprado(); 
+                    }
+                </script>
+            </form>
+        </div>
+    </main>
+
+    <br>
+    <a class="btn btn-primary" role="button" th:href="@{/garage/listar}">Volver al Listado</a>
+    <br>
+    <footer class="mt-auto py-3 border-top">
+        <p class="mb-0 text-body-secondary">© 2025 TP final</p>
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

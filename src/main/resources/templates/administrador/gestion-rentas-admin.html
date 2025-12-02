@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Gestión de Rentas - Asignar Vehículos</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    </head>
+    <body class="d-flex flex-column align-items-center min-vh-100 py-4 bg-body-tertiary">
+
+        <header>
+            <nav class="navbar navbar-expand-md navbar-primary fixed-top bg-primary">
+                <div class="container-fluid">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{/administrador/logout}">Cerrar Sesión</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <br>
+            <br>
+            <br>
+            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                <h1 class="display-4 fw-normal text-body-emphasis">Gestión de Rentas - Asignar Vehículos</h1>
+                <p class="lead">Asigne vehículos a garages de socios (comprados o rentados)</p>
+            </div>
+        </header>
+
+        <main class="form-signin w-50 mx-auto">
+            <div th:if="${exito}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Éxito!</strong> <span th:text="${exito}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form th:action="@{/garage/asignar-vehiculo}" method="post" id="asignacionForm">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold" for="socioSelect">Seleccione un Socio:</label>
+                            <select class="form-select form-select-lg" id="socioSelect" name="socioId" required 
+                                    onchange="cargarDatosSocio(this.value)">
+                                <option value="" disabled selected>-- Seleccione un Socio --</option>
+                                <option th:each="socio : ${socios}" 
+                                        th:value="${socio.id}" 
+                                        th:text="${socio.nombre + ' (DNI: ' + socio.dni + ')'}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div id="datosSocioContainer" class="border rounded p-3 bg-light" style="display: none;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center">
+                <p class="text-muted">
+                    <strong>Nota:</strong> Esta función permite asignar vehículos a garages que el socio tiene (comprados o rentados).
+                </p>
+            </div>
+        </main>
+
+        <br>
+        <a class="btn btn-primary" role="button" th:href="@{/administrador/menu}">Volver al Menú</a>
+        <br>
+
+        <footer class="mt-auto py-3 border-top">
+            <p class="mb-0 text-body-secondary">© 2025 TP final</p>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+        <script>
+            function cargarDatosSocio(socioId) {
+                if (!socioId) {
+                    document.getElementById('datosSocioContainer').style.display = 'none';
+                    return;
+                }
+
+                fetch('/garage/datos-socio/' + socioId)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error HTTP: ' + response.status);
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        const container = document.getElementById('datosSocioContainer');
+                        container.innerHTML = html;
+                        container.style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('datosSocioContainer').innerHTML =
+                            '<div class="alert alert-danger">Error al cargar datos: ' + error.message + '</div>';
+                        document.getElementById('datosSocioContainer').style.display = 'block';
+                    });
+            }
+        </script>
+    </body>
+</html>

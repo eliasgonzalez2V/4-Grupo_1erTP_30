@@ -1,17 +1,34 @@
 package com.proyectofinal.guarderia.guarderia_web.modelos;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import java.util.List;
+import java.time.LocalDate;
 
-@Data
 @Entity
 @Table(name = "socio")
-@EqualsAndHashCode(callSuper = true)
-@AttributeOverride(name = "id", column = @Column(name = "ID_socio"))
+@PrimaryKeyJoinColumn(name = "ID_persona")
 public class Socio extends Persona {
 
-    @OneToMany(mappedBy = "socio", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SocioAsignacion> asignaciones;
+    @Column(name = "fechaIngreso")
+    private LocalDate fechaIngreso;
+
+    public Socio() {
+        super();
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void prePersist() {
+        this.setTipo_persona("socio");
+        if (this.fechaIngreso == null) {
+            this.fechaIngreso = LocalDate.now();
+        }
+    }
+
+    public LocalDate getFechaIngreso() {
+        return fechaIngreso;
+    }
+
+    public void setFechaIngreso(LocalDate fechaIngreso) {
+        this.fechaIngreso = fechaIngreso;
+    }
 }

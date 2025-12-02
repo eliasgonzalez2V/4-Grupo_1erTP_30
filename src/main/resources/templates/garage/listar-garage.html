@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Listar Garages</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    </head>
+    <body class="d-flex flex-column align-items-center min-vh-100 py-4 bg-body-tertiary">
+        <div class="container py-3">
+            <header>
+                <nav class="navbar navbar-expand-md navbar-primary fixed-top bg-primary">
+                    <div class="container-fluid">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" th:href="@{/administrador/logout}">Cerrar Sesión</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <br>
+                <br>
+                <br>
+                <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                    <h1 class="display-4 fw-normal text-body-emphasis">Lista de Garages</h1>
+
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                        <strong>Error!</strong> <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                        <strong>Éxito!</strong> <span th:text="${success}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <div th:if="${exito}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                        <strong>Éxito!</strong> <span th:text="${exito}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </div>
+            </header>
+            <main class="form-signin w-100 m-auto">
+                <table class="table table-striped table-hover table-bordered border-primary">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Zona</th>
+                            <th>Contador Luz</th>
+                            <th>Fecha Inicio Renta</th>
+                            <th>Fecha Fin Renta</th>
+                            <th>Fecha Compra</th>
+                            <th>Vehículo Asignado</th>
+                            <th>Socio Propietario</th>
+                            <th>Socio Rentado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <tr th:each="garage : ${garages}">
+                            <td th:text="${garage.id}"></td>
+                            <td th:text="${garage.zona?.id}"></td>
+                            <td th:text="${garage.contadorLuz} ?: '0'"></td>
+                            <td>
+                                <span th:if="${garage.fechaInicioRenta != null}" 
+                                      th:text="${garage.fechaInicioRenta}"></span>
+                                <span th:unless="${garage.fechaInicioRenta != null}" 
+                                      class="text-muted">No rentado</span>
+                            </td>
+                            <td>
+                                <span th:if="${garage.fechaFinRenta != null}" 
+                                      th:text="${garage.fechaFinRenta}"></span>
+                                <span th:unless="${garage.fechaFinRenta != null}" 
+                                      class="text-muted">-</span>
+                            </td>
+                            <td>
+                                <span th:if="${garage.fechaCompra != null}" 
+                                      th:text="${garage.fechaCompra}"></span>
+                                <span th:unless="${garage.fechaCompra != null}" 
+                                      class="text-muted">No comprado</span>
+                            </td>
+                            <td>
+                                <span th:if="${garage.vehiculoAsignado != null}" 
+                                      th:text="${garage.vehiculoAsignado.matricula + ' - ' + garage.vehiculoAsignado.marca}"></span>
+                                <span th:unless="${garage.vehiculoAsignado != null}" 
+                                      class="text-muted">Ninguno</span>
+                            </td>
+                            <td>
+                                <span th:if="${garage.socioPropietario != null}" 
+                                      th:text="${garage.socioPropietario.nombre}"></span>
+                                <span th:unless="${garage.socioPropietario != null}" 
+                                      class="text-muted">No tiene</span>
+                            </td>
+                            <td>
+                                <span th:if="${garage.socioRentado != null}" 
+                                      th:text="${garage.socioRentado.nombre}"></span>
+                                <span th:unless="${garage.socioRentado != null}" 
+                                      class="text-muted">No rentado</span>
+                            </td>
+                            <td>
+                                <a class="btn btn-outline-primary btn-sm" role="button" th:href="@{/garage/editar/{id}(id=${garage.id})}">Editar</a>
+                                <a class="btn btn-outline-danger btn-sm" role="button" th:href="@{/garage/eliminar/{id}(id=${garage.id})}" 
+                                   onclick="return confirm('¿Está seguro de que desea eliminar este garage?');">Eliminar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </main>
+            <br>
+            <a class="btn btn-primary" role="button" th:href="@{/administrador/menu}">Volver al Menú</a>
+        </div>
+        <footer class="mt-auto py-3 border-top">
+            <p class=" text-body-secondary">© 2025 TP final</p>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    </body>
+</html>

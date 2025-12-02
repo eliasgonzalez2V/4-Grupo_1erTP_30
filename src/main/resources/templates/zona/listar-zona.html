@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Listar Zonas</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    </head>
+    <body class="d-flex flex-column align-items-center min-vh-100 py-4 bg-body-tertiary">
+        <div class="container py-3">
+            <header>
+                <nav class="navbar navbar-expand-md navbar-primary fixed-top bg-primary">
+                    <div class="container-fluid">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" th:href="@{/administrador/logout}">Cerrar Sesión</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <br>
+                <br>
+                <br>
+                <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                    <h1 class="display-4 fw-normal text-body-emphasis">Lista de Zonas</h1>
+
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                        <strong>Error!</strong> <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                        <strong>Éxito!</strong> <span th:text="${success}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <div th:if="${exito}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                        <strong>Éxito!</strong> <span th:text="${exito}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </div>
+            </header>
+            <main class="form-signin w-100 m-auto">
+                <div th:if="${zonas.empty}">
+                    <div class="alert alert-info" role="alert">
+                        No hay zonas registradas.
+                    </div>
+                </div>
+
+                <div th:unless="${zonas.empty}">
+                    <table class="table table-striped table-hover table-bordered border-primary">
+                        <thead>
+                            <tr>
+                                <th>ID Zona</th>
+                                <th>Tipo de Vehículo</th>
+                                <th>Profundidad (m)</th>
+                                <th>Ancho (m)</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <tr th:each="zona : ${zonas}">
+                                <td th:text="${zona.id}"></td>
+                                <td th:text="${zona.tipoVehiculo}"></td>
+                                <td th:text="${zona.profundidadGarages}"></td>
+                                <td th:text="${zona.anchoGarages}"></td>
+                                <td>
+                                    <a class="btn btn-outline-primary" th:href="@{/zona/editar/{id}(id=${zona.id})}" role="button">Editar</a>
+                                    <a class="btn btn-outline-danger" th:href="@{/zona/eliminar/{id}(id=${zona.id})}" role="button"
+                                       onclick="return confirm('¿Está seguro de que desea eliminar esta zona?');">Eliminar</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+            <br>
+            <a class="btn btn-primary" role="button" th:href="@{/administrador/menu}">Volver al Menú</a>
+        </div>
+        <footer class="mt-auto py-3 border-top">
+            <p class="text-body-secondary">© 2025 TP final</p>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    </body>
+</html>
